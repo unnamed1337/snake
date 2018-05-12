@@ -20,13 +20,13 @@ namespace Snake
         /// <summary>
         /// Wahrscheinlichkeit in % auf random richtungswechsel
         /// </summary>
-        private static int randomChange = 5;
+        private static int randomChange = 0;
         public static int ChooseDir(DL.Snake snake,Food food)
         {
             Random rnd = new Random();
             if (nextdir >= 0)
             {
-                randomChange++;
+                //randomChange++;
                 int tmp = nextdir;
                 nextdir = -1;
                 lastdir = tmp;
@@ -77,11 +77,11 @@ namespace Snake
             {
                 dir = 0;
             }
-            else if(food.posY > snake.Elements[0].PosY && Options.Contains(1))
+            else if (food.posY > snake.Elements[0].PosY && Options.Contains(1))
             {
                 dir = 1;
             }
-            else if(food.posX < snake.Elements[0].PosX && Options.Contains(2))
+            else if (food.posX < snake.Elements[0].PosX && Options.Contains(2))
             {
                 dir = 2;
             }
@@ -91,11 +91,11 @@ namespace Snake
             }
             else
             {
-                
+
                 if (Options.Contains(lastdir - 1))
                 {
                     dir = lastdir - 1;
-                    nextdir = dir -1;
+                    nextdir = dir - 1;
                 }
                 else if (Options.Contains(lastdir + 1))
                 {
@@ -113,10 +113,76 @@ namespace Snake
                 }
             }
 
+            if (food.posX > snake.Elements[0].PosX && food.posY > snake.Elements[0].PosY)
+            {
+                if((food.posX - snake.Elements[0].PosX) > (food.posY- snake.Elements[0].PosY) && Options.Contains(0))
+                {
+                    dir = 0;
+                }
+                else if ((food.posX - snake.Elements[0].PosX) < (food.posY - snake.Elements[0].PosY) && Options.Contains(0))
+                {
+                    dir = 1;
+                }
+                else
+                {
+                    //dir = Options[rnd.Next(0, Options.Count)];
+                    //nextdir = dir;
+                }
+            }
+            else if(food.posX > snake.Elements[0].PosX && food.posY < snake.Elements[0].PosY)
+            {
+                if((food.posX - snake.Elements[0].PosX) > (snake.Elements[0].PosY - food.posY) && Options.Contains(0))
+                {
+                    dir = 0;
+                }
+                else if ((food.posX - snake.Elements[0].PosX) < (snake.Elements[0].PosY - food.posY) && Options.Contains(3))
+                {
+                    dir = 3;
+                }
+                else
+                {
+                    //dir = Options[rnd.Next(0, Options.Count)];
+                    //nextdir = dir;
+                }
+            }
+            else if (food.posX < snake.Elements[0].PosX && food.posY > snake.Elements[0].PosY)
+            {
+                if((snake.Elements[0].PosX - food.posX) > (food.posY - snake.Elements[0].PosY) && Options.Contains(2))
+                {
+                    dir = 2;
+                }
+                else if ((snake.Elements[0].PosX - food.posX) < (food.posY - snake.Elements[0].PosY) && Options.Contains(1))
+                {
+                    dir = 1;
+                }
+                else
+                {
+                    //dir = Options[rnd.Next(0, Options.Count)];
+                    //nextdir = dir;
+                }
+            }
+            else if (food.posX < snake.Elements[0].PosX && food.posY < snake.Elements[0].PosY)
+            {
+                if((snake.Elements[0].PosX - food.posX) > (snake.Elements[0].PosY - food.posY)&&Options.Contains(2))
+                {
+                    dir = 2;
+                }
+                else if ((snake.Elements[0].PosX - food.posX) < (snake.Elements[0].PosY - food.posY) && Options.Contains(3))
+                {
+                    dir = 3;
+                }
+                else
+                {
+                    //dir = Options[rnd.Next(0, Options.Count)];
+                    //nextdir = dir;
+                }
+            }
+
             if (rnd.Next(0, 100) < randomChange)
             {
                 dir = Options[rnd.Next(0, Options.Count)];
             }
+
 
             lastdir = dir;
             return dir;
