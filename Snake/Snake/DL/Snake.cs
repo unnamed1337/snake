@@ -32,8 +32,9 @@ namespace Snake.DL
 
             if(level >= colors.Count)
             {
-                Random rnd = new Random();
-                tmp = colors[rnd.Next(0, colors.Count)];
+                //Random rnd = new Random();
+                //tmp = colors[rnd.Next(0, colors.Count)];
+                tmp = Color.Green;
             }
             else
             {
@@ -45,6 +46,14 @@ namespace Snake.DL
         }
         public void Shift()
         {
+            while (dir > 3)
+            {
+                dir = dir - 4;
+            }
+            while (dir < 0)
+            {
+                dir = dir + 4;
+            }
             //var tmp = Elements;
             for(int i = Elements.Count-1; i > 0;i--)
             {

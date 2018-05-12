@@ -15,6 +15,7 @@ namespace Snake
     {
         private DL.Snake currentSnake { get; set; }
         private Food currendFood { get; set; }
+        private bool aiMode = true;
         public Game()
         {
             currentSnake = new DL.Snake();
@@ -23,21 +24,24 @@ namespace Snake
 
         private void Game_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Up)
+            if (timer1.Enabled && !aiMode)
             {
-                currentSnake.dir = 3;
-            }
-            if(e.KeyCode == Keys.Down)
-            {
-                currentSnake.dir = 1;
-            }
-            if(e.KeyCode == Keys.Left)
-            {
-                currentSnake.dir = 2;
-            }
-            if(e.KeyCode== Keys.Right)
-            {
-                currentSnake.dir = 0;
+                if (e.KeyCode == Keys.Up)
+                {
+                    currentSnake.dir = 3;
+                }
+                if (e.KeyCode == Keys.Down)
+                {
+                    currentSnake.dir = 1;
+                }
+                if (e.KeyCode == Keys.Left)
+                {
+                    currentSnake.dir = 2;
+                }
+                if (e.KeyCode == Keys.Right)
+                {
+                    currentSnake.dir = 0;
+                }
             }
             if(e.KeyCode == Keys.Space)
             {
@@ -50,10 +54,22 @@ namespace Snake
                     timer1.Start();
                 }
             }
+            if (e.KeyCode == Keys.G)
+            {
+                aiMode = !aiMode;
+            }
         }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (aiMode)
+            {
+                currentSnake.dir = Player.ChooseDir(currentSnake, currendFood);
+            }
+            else
+            {
+                Player.lastdir = currentSnake.dir;
+            }
             currentSnake.Shift();
             draw(null);
             checkFood();
