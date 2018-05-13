@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,60 @@ namespace Snake
         private DL.Snake currentSnake { get; set; }
         private Food currendFood { get; set; }
         private bool aiMode = true;
+        public static bool alive = true; 
         public Game()
         {
             currentSnake = new DL.Snake();
+            PlayerInit();
             InitializeComponent();
+        }
+
+        public void PlayerInit()
+        {
+            Player.Situations = new List<Situation>();
+            List<string> files = new List<string> { "0", "01", "012", "013", "02", "023", "03", "1", "12", "123", "13", "2", "23", "3" };
+            foreach (string file in files)
+            {
+                string path = file + ".csv";
+                if (!File.Exists(path))                
+                {
+                    string tmp = "";
+                    foreach(char c in file)
+                    {
+                        tmp = tmp + c + ";0" + Environment.NewLine;
+                    }
+                    File.WriteAllText(path, tmp);
+                }
+                List<Tuple<int, int>> Options = new List<Tuple<int, int>>();
+                StreamReader reader = new StreamReader(File.OpenRead(path));
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (!String.IsNullOrWhiteSpace(line))
+                    {
+                        string[] values = line.Split(';');
+                        Options.Add(new Tuple<int, int>(Convert.ToInt32(values[0]), Convert.ToInt32(values[1])));
+                    }
+                }
+                reader.Close();
+                Player.Situations.Add(new Situation(Options));
+            }
+        }
+        public void WriteSituations()
+        {
+            foreach(Situation sit in Player.Situations)
+            {
+                string path = "";
+                string text = "";
+                foreach (Tuple<int,int> o in sit.Options)
+                {
+                    path += o.Item1.ToString();
+                    text += o.Item1.ToString() + ";" + o.Item2.ToString()+Environment.NewLine;
+                }
+                path = path+".csv";
+                
+                File.WriteAllText(path, text);
+            }
         }
 
         private void Game_KeyDown(object sender, KeyEventArgs e)
@@ -49,7 +100,7 @@ namespace Snake
                 {
                     timer1.Stop();
                 }
-                else
+                else if(alive)
                 {
                     timer1.Start();
                 }
@@ -138,7 +189,13 @@ namespace Snake
 
             if (!stillAlive)
             {
+                alive = false;
+                if (aiMode)
+                {
+                    WriteSituations();
+                }
                 timer1.Stop();
+                var tmp = Player.Log;
                 Graphics g = this.CreateGraphics();
                 g.Clear(Color.Black);
 
