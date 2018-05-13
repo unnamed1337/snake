@@ -155,6 +155,7 @@ namespace Snake
             currentSnake.Elements.Add(new SnakeDot((Globals.Width * 10), 10));
             currentSnake.Append();
             currentSnake.Append();
+            currentSnake.Append();
 
             generateFood();
 
