@@ -62,6 +62,10 @@ namespace Snake
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            currentSnake.Shift();
+            draw(null);
+            checkFood();
+            checkDeath();
             if (aiMode)
             {
                 currentSnake.dir = Player.ChooseDir(currentSnake, currendFood);
@@ -70,10 +74,6 @@ namespace Snake
             {
                 Player.lastdir = currentSnake.dir;
             }
-            currentSnake.Shift();
-            draw(null);
-            checkFood();
-            checkDeath();
         }
 
         private void draw(PaintEventArgs e)

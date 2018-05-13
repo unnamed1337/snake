@@ -113,15 +113,40 @@ namespace Snake
                 }
             }
 
-            if (food.posX > snake.Elements[0].PosX && food.posY > snake.Elements[0].PosY)
+            if (food.posX >= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
             {
-                if((food.posX - snake.Elements[0].PosX) > (food.posY- snake.Elements[0].PosY) && Options.Contains(0))
+                if((food.posX - snake.Elements[0].PosX) > (food.posY- snake.Elements[0].PosY))
                 {
-                    dir = 0;
+                    if (Options.Contains(0))
+                    {
+                        dir = 0;
+                    }
+                    else if (Options.Contains(1))
+                    {
+                        dir = 1;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
+                    
                 }
-                else if ((food.posX - snake.Elements[0].PosX) < (food.posY - snake.Elements[0].PosY) && Options.Contains(0))
+                else if ((food.posX - snake.Elements[0].PosX) < (food.posY - snake.Elements[0].PosY))
                 {
-                    dir = 1;
+                    if (Options.Contains(1))
+                    {
+                        dir = 1;
+                    }
+                    else if (Options.Contains(0))
+                    {
+                        dir = 0;
+                    }
+                    else
+                    {
+                        //nextdir = dir;
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                    }
                 }
                 else
                 {
@@ -129,15 +154,40 @@ namespace Snake
                     //nextdir = dir;
                 }
             }
-            else if(food.posX > snake.Elements[0].PosX && food.posY < snake.Elements[0].PosY)
+            else if(food.posX >= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
             {
-                if((food.posX - snake.Elements[0].PosX) > (snake.Elements[0].PosY - food.posY) && Options.Contains(0))
+                if((food.posX - snake.Elements[0].PosX) > (snake.Elements[0].PosY - food.posY))
                 {
-                    dir = 0;
+                    if (Options.Contains(0))
+                    {
+                        dir = 0;
+                    }
+                    else if (Options.Contains(3))
+                    {
+                        dir = 3;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
+                    
                 }
-                else if ((food.posX - snake.Elements[0].PosX) < (snake.Elements[0].PosY - food.posY) && Options.Contains(3))
+                else if ((food.posX - snake.Elements[0].PosX) < (snake.Elements[0].PosY - food.posY))
                 {
-                    dir = 3;
+                    if (Options.Contains(3))
+                    {
+                        dir = 3;
+                    }
+                    else if (Options.Contains(0))
+                    {
+                        dir = 0;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
                 }
                 else
                 {
@@ -145,15 +195,39 @@ namespace Snake
                     //nextdir = dir;
                 }
             }
-            else if (food.posX < snake.Elements[0].PosX && food.posY > snake.Elements[0].PosY)
+            else if (food.posX <= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
             {
-                if((snake.Elements[0].PosX - food.posX) > (food.posY - snake.Elements[0].PosY) && Options.Contains(2))
+                if((snake.Elements[0].PosX - food.posX) > (food.posY - snake.Elements[0].PosY))
                 {
-                    dir = 2;
+                    if (Options.Contains(2))
+                    {
+                        dir = 2;
+                    }
+                    else if (Options.Contains(1))
+                    {
+                        dir = 1;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
                 }
-                else if ((snake.Elements[0].PosX - food.posX) < (food.posY - snake.Elements[0].PosY) && Options.Contains(1))
+                else if ((snake.Elements[0].PosX - food.posX) < (food.posY - snake.Elements[0].PosY))
                 {
-                    dir = 1;
+                    if (Options.Contains(1))
+                    {
+                        dir = 1;
+                    }
+                    else if (Options.Contains(2))
+                    {
+                        dir = 2;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
                 }
                 else
                 {
@@ -161,15 +235,39 @@ namespace Snake
                     //nextdir = dir;
                 }
             }
-            else if (food.posX < snake.Elements[0].PosX && food.posY < snake.Elements[0].PosY)
+            else if (food.posX <= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
             {
-                if((snake.Elements[0].PosX - food.posX) > (snake.Elements[0].PosY - food.posY)&&Options.Contains(2))
+                if((snake.Elements[0].PosX - food.posX) > (snake.Elements[0].PosY - food.posY))
                 {
-                    dir = 2;
+                    if (Options.Contains(2))
+                    {
+                        dir = 2;
+                    }
+                    else if (Options.Contains(3))
+                    {
+                        dir = 3;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
                 }
-                else if ((snake.Elements[0].PosX - food.posX) < (snake.Elements[0].PosY - food.posY) && Options.Contains(3))
+                else if ((snake.Elements[0].PosX - food.posX) < (snake.Elements[0].PosY - food.posY))
                 {
-                    dir = 3;
+                    if (Options.Contains(3))
+                    {
+                        dir = 3;
+                    }
+                    else if (Options.Contains(2))
+                    {
+                        dir = 2;
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                    }
                 }
                 else
                 {
