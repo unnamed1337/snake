@@ -13,11 +13,13 @@ namespace Snake.DL
         public int Width { get; set; }
         public int PosX { get; set; }
         public int PosY { get; set; }
-        public SnakeDot(int x,int y)
+        public Color dotColor { get; set; }
+        public SnakeDot(int x,int y,Color c)
         {
             Width = Globals.Width;
             PosX = x;
             PosY = y;
+            dotColor = c;
         }
     }
 }

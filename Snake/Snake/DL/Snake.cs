@@ -28,13 +28,14 @@ namespace Snake.DL
         }
         public Color GetSnakeColor()
         {
+            Random rnd = new Random();
+            colors = colors.OrderBy(x => rnd.Next()).ToList();
             Color tmp = Color.White;
 
             if(level >= colors.Count)
             {
-                //Random rnd = new Random();
-                //tmp = colors[rnd.Next(0, colors.Count)];
-                tmp = Color.Green;
+                tmp = colors[rnd.Next(0, colors.Count)];
+                //tmp = Color.Green;
             }
             else
             {
@@ -104,7 +105,7 @@ namespace Snake.DL
                 y++;
             }
 
-            Elements.Add(new SnakeDot(x, y));
+            Elements.Add(new SnakeDot(x, y,GetSnakeColor()));
         }
     }
 }

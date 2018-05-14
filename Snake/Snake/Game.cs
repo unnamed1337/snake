@@ -17,7 +17,10 @@ namespace Snake
         private DL.Snake currentSnake { get; set; }
         private Food currendFood { get; set; }
         private bool aiMode = true;
-        public static bool alive = true; 
+        public static bool alive = true;
+        public int best = 0;
+        int count = 0;
+        int sum = 0;
         public Game()
         {
             currentSnake = new DL.Snake();
@@ -113,10 +116,17 @@ namespace Snake
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            currentSnake.Shift();
-            draw(null);
-            checkFood();
-            checkDeath();
+            if (alive)
+            {
+                currentSnake.Shift();
+                draw(null);
+                checkFood();
+                checkDeath();
+                if (currentSnake.level > best)
+                {
+                    best = currentSnake.level;
+                }
+            }
             if (aiMode)
             {
                 currentSnake.dir = Player.ChooseDir(currentSnake, currendFood);
@@ -136,12 +146,13 @@ namespace Snake
 
             foreach (SnakeDot dot in currentSnake.Elements)
             {
-                Brush brush = new SolidBrush(currentSnake.GetSnakeColor());
+                Brush brush = new SolidBrush(dot.dotColor);
 
                 g.FillEllipse(brush,dot.PosX, dot.PosY, dot.Width, dot.Width);
                 //g.DrawEllipse(new Pen(currentSnake.GetSnakeColor()),new Rectangle(dot.PosX,dot.PosY,dot.Width,dot.Width));
             }
-            this.Text = "Snake - Level #" + currentSnake.level;
+            int avg = count>0?(int)(sum / count):0;
+            this.Text = "Snake - Level #" + currentSnake.level+" - Best: #"+best+" - AVG: #"+avg+ " - Round: "+(count + 1);
         }
 
         private void generateFood()
@@ -192,6 +203,7 @@ namespace Snake
                 alive = false;
                 if (aiMode)
                 {
+                    Player.DownVoteLast();
                     WriteSituations();
                 }
                 timer1.Stop();
@@ -205,11 +217,13 @@ namespace Snake
                 {
                     g.FillEllipse(new SolidBrush(Color.Red), new Rectangle(dot.PosX, dot.PosY, dot.Width, dot.Width));
                 }
+
+                restart();
             }
         }
         private void btnStart_Click(object sender, EventArgs e)
         {
-            currentSnake.Elements.Add(new SnakeDot((Globals.Width * 10), 10));
+            currentSnake.Elements.Add(new SnakeDot((Globals.Width * 10), 10,Color.Green));
             currentSnake.Append();
             currentSnake.Append();
             currentSnake.Append();
@@ -221,6 +235,24 @@ namespace Snake
             btnStart.Visible = false;
 
             //currentSnake.dir = 2;
+        }
+        
+        private void restart()
+        {
+            sum += currentSnake.level;
+            count++;
+            currentSnake = currentSnake = new DL.Snake();
+            generateFood();
+            Player.Log = new List<Tuple<int, int, List<int>>>();
+
+
+            currentSnake.Elements.Add(new SnakeDot((Globals.Width * 10), 10, Color.Green));
+            currentSnake.Append();
+            currentSnake.Append();
+            currentSnake.Append();
+
+            alive = true;
+            timer1.Start();
         }
 
         private void Game_Load(object sender, EventArgs e)
