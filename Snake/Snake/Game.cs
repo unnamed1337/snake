@@ -21,10 +21,12 @@ namespace Snake
         public int best = 0;
         int count = 0;
         int sum = 0;
+        List<Tuple<int,bool>> scores { get; set; }
         public Game()
         {
             currentSnake = new DL.Snake();
             PlayerInit();
+            LoadScoreList();
             InitializeComponent();
         }
 
@@ -58,6 +60,45 @@ namespace Snake
                 reader.Close();
                 Player.Situations.Add(new Situation(Options));
             }
+        }
+        public void LoadScoreList()
+        {
+            string path = "scoreboard.csv";
+            scores = new List<Tuple<int, bool>>();
+            if (File.Exists(path))
+            {
+                StreamReader reader = new StreamReader(File.OpenRead(path));
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    if (!String.IsNullOrWhiteSpace(line))
+                    {
+                        string[] values = line.Split(';');
+                        scores.Add(new Tuple<int, bool>(Convert.ToInt32(values[0]), values[1] == "1" ? true:false));
+                    }
+                }
+                reader.Close();
+            }
+        }
+        public void writeScoreList()
+        {
+            scores.Add(new Tuple<int, bool>(currentSnake.level, aiMode));
+            scores.Sort((x, y) => y.Item1.CompareTo(x.Item1));
+            string path = "scoreboard.csv";
+            string tmp = "";
+
+            int count = 0;
+            foreach(Tuple<int,bool> temp in scores)
+            {
+                tmp += temp.Item1 + ";" + (temp.Item2 ? "1" : "0")+Environment.NewLine;
+                count++;
+                if(count == 10)
+                {
+                    break;
+                }
+            }
+
+            File.WriteAllText(path, tmp);
         }
         public void WriteSituations()
         {
@@ -116,6 +157,14 @@ namespace Snake
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            if (aiMode)
+            {
+                currentSnake.dir = Player.ChooseDir(currentSnake, currendFood);
+            }
+            else
+            {
+                Player.lastdir = currentSnake.dir;
+            }
             if (alive)
             {
                 currentSnake.Shift();
@@ -127,20 +176,21 @@ namespace Snake
                     best = currentSnake.level;
                 }
             }
-            if (aiMode)
-            {
-                currentSnake.dir = Player.ChooseDir(currentSnake, currendFood);
-            }
-            else
-            {
-                Player.lastdir = currentSnake.dir;
-            }
         }
 
         private void draw(PaintEventArgs e)
         {
             Graphics g = this.CreateGraphics();
             g.Clear(Color.Black);
+
+            if (scores.Count >= 3)
+            {
+                scores.Sort((x, y) => y.Item1.CompareTo(x.Item1));
+                string top3 = "#1 " + (scores[0].Item2 ? "KI" : "Player") + ": " + scores[0].Item1 + Environment.NewLine;
+                top3 += "#2 " + (scores[1].Item2 ? "KI" : "Player") + ": " + scores[1].Item1 + Environment.NewLine;
+                top3 += "#3 " + (scores[2].Item2 ? "KI" : "Player") + ": " + scores[2].Item1;
+                DrawString(top3);
+            }
 
             g.FillEllipse(new SolidBrush(Color.Red), new Rectangle(currendFood.posX, currendFood.posY, currendFood.width, currendFood.width));
 
@@ -151,8 +201,24 @@ namespace Snake
                 g.FillEllipse(brush,dot.PosX, dot.PosY, dot.Width, dot.Width);
                 //g.DrawEllipse(new Pen(currentSnake.GetSnakeColor()),new Rectangle(dot.PosX,dot.PosY,dot.Width,dot.Width));
             }
-            int avg = count>0?(int)(sum / count):0;
+            int avg = ((sum + currentSnake.level) / (count + 1));
             this.Text = "Snake - Level #" + currentSnake.level+" - Best: #"+best+" - AVG: #"+avg+ " - Round: "+(count + 1);
+            
+        }
+
+        public void DrawString(string text)
+        {
+            Graphics formGraphics = this.CreateGraphics();
+            string drawString = text;
+            Font drawFont = new Font("Arial", 16);
+            SolidBrush drawBrush = new SolidBrush(Color.White);
+            float x = 10;
+            float y = 10;
+            StringFormat drawFormat = new System.Drawing.StringFormat();
+            formGraphics.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
+            drawFont.Dispose();
+            drawBrush.Dispose();
+            formGraphics.Dispose();
         }
 
         private void generateFood()
@@ -165,9 +231,10 @@ namespace Snake
 
             int x = rnd.Next(10, maxX-10);
             int y = rnd.Next(10, maxY-10);
-
+            
             x = x * (Globals.Width + 1) + 1;
             y = y * (Globals.Width + 1) - 1;
+
             currendFood = new Food(x,y);
         }
 
@@ -178,6 +245,26 @@ namespace Snake
                 currentSnake.level++;
                 currentSnake.Append();
                 generateFood();
+                
+                while (true)
+                {
+                    bool insideSnake = false;
+                    foreach(SnakeDot dot in currentSnake.Elements)
+                    {
+                        if(dot.PosX == currendFood.posX && dot.PosY == currendFood.posY)
+                        {
+                            insideSnake = true;
+                        }
+                    }
+                    if (insideSnake)
+                    {
+                        generateFood();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
             }
         }
         private void checkDeath()
@@ -207,6 +294,7 @@ namespace Snake
                     WriteSituations();
                 }
                 timer1.Stop();
+                writeScoreList();
                 var tmp = Player.Log;
                 Graphics g = this.CreateGraphics();
                 g.Clear(Color.Black);
@@ -244,6 +332,7 @@ namespace Snake
             currentSnake = currentSnake = new DL.Snake();
             generateFood();
             Player.Log = new List<Tuple<int, int, List<int>>>();
+            LoadScoreList();
 
 
             currentSnake.Elements.Add(new SnakeDot((Globals.Width * 10), 10, Color.Green));

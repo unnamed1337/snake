@@ -38,7 +38,7 @@ namespace Snake
                 {
                     if (tmp.Item1 == lastdir)
                     {
-                        Situations[Situations.IndexOf(situation)].Options[Situations[Situations.IndexOf(situation)].Options.IndexOf(tmp)] = new Tuple<int, int>(lastdir, (tmp.Item2 / 2));
+                        Situations[Situations.IndexOf(situation)].Options[Situations[Situations.IndexOf(situation)].Options.IndexOf(tmp)] = new Tuple<int, int>(lastdir, 1);
                         break;
                     }
                 }
@@ -100,11 +100,11 @@ namespace Snake
             List<int> Options = new List<int> { 0,1,2,3 };
             int dir = 0;
 
-            if(lastdir == 0)
+            if (lastdir == 0)
             {
                 Options.Remove(2);
             }
-            else if(lastdir == 1)
+            else if (lastdir == 1)
             {
                 Options.Remove(3);
             }
@@ -136,49 +136,49 @@ namespace Snake
                 //    Options.Remove(3);
                 //}
 
-                if(snake.Elements[i].PosX > snake.Elements[0].PosX)
+                if(snake.Elements[0].PosX > snake.Elements[i].PosX)
                 {
-                    if(snake.Elements[i].PosY == snake.Elements[0].PosY)
+                    if(snake.Elements[0].PosY == snake.Elements[i].PosY)
                     {
-                        if (snake.Elements[i].PosX - snake.Elements[0].PosX < Globals.Width)
+                        if (snake.Elements[0].PosX - snake.Elements[i].PosX == Globals.Width + 1)
                         {
                             Options.Remove(2);
                         }
                     }
                 }
-                else if(snake.Elements[i].PosX == snake.Elements[0].PosX)
+                else if(snake.Elements[0].PosX == snake.Elements[i].PosX)
                 {
                     
                 }
                 else
                 {
-                    if (snake.Elements[i].PosY == snake.Elements[0].PosY)
+                    if (snake.Elements[0].PosY == snake.Elements[i].PosY)
                     {
-                        if (snake.Elements[0].PosX - snake.Elements[i].PosX < Globals.Width)
+                        if (snake.Elements[i].PosX - snake.Elements[0].PosX == Globals.Width + 1)
                         {
                             Options.Remove(0);
                         }
                     }
                 }
-                if (snake.Elements[i].PosY > snake.Elements[0].PosY)
+                if (snake.Elements[0].PosY > snake.Elements[i].PosY)
                 {
-                    if (snake.Elements[i].PosX == snake.Elements[0].PosX)
+                    if (snake.Elements[0].PosX == snake.Elements[i].PosX)
                     {
-                        if (snake.Elements[i].PosY - snake.Elements[0].PosY < Globals.Width)
+                        if (snake.Elements[0].PosY - snake.Elements[i].PosY == Globals.Width + 1)
                         {
                             Options.Remove(3);
                         }
                     }
                 }
-                else if (snake.Elements[i].PosY == snake.Elements[0].PosY)
+                else if (snake.Elements[0].PosY == snake.Elements[i].PosY)
                 {
                     
                 }
                 else
                 {
-                    if (snake.Elements[i].PosX == snake.Elements[0].PosX)
+                    if (snake.Elements[0].PosX == snake.Elements[i].PosX)
                     {
-                        if (snake.Elements[0].PosY - snake.Elements[i].PosY < Globals.Width)
+                        if (snake.Elements[i].PosY - snake.Elements[0].PosY <= Globals.Width + 1)
                         {
                             Options.Remove(1);
                         }
@@ -225,22 +225,101 @@ namespace Snake
             //        //dir = Options[rnd.Next(0, Options.Count)];
             //    }
             //}
-
-            Situation mySituation = GetSituationByOptions(Options);
-
-            if (food.posX >= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
+            if (Options.Count > 1)
             {
-                if((food.posX - snake.Elements[0].PosX) > (food.posY- snake.Elements[0].PosY))
+                Situation mySituation = GetSituationByOptions(Options);
+                if (food.posX >= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
                 {
-                    if (Options.Contains(0))
+                    if ((food.posX - snake.Elements[0].PosX) > (food.posY - snake.Elements[0].PosY))
                     {
-                        dir = 0;
-                        logging(dir, 1, Options);
+                        if (Options.Contains(0))
+                        {
+                            dir = 0;
+                            logging(dir, 1, Options);
+                        }
+                        else if (Options.Contains(1))
+                        {
+                            dir = 1;
+                            logging(dir, 2, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
+
                     }
-                    else if (Options.Contains(1))
+                    else if ((food.posX - snake.Elements[0].PosX) < (food.posY - snake.Elements[0].PosY))
                     {
-                        dir = 1;
-                        logging(dir, 2, Options);
+                        if (Options.Contains(1))
+                        {
+                            dir = 1;
+                            logging(dir, 3, Options);
+                        }
+                        else if (Options.Contains(0))
+                        {
+                            dir = 0;
+                            logging(dir, 4, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //nextdir = dir;
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            logging(dir, 0, Options);
+                        }
+                    }
+                    else
+                    {
+                        //dir = Options[rnd.Next(0, Options.Count)];
+                        //nextdir = dir;
+                        logging(dir, 0, Options);
+                    }
+                }
+                else if (food.posX >= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
+                {
+                    if ((food.posX - snake.Elements[0].PosX) > (snake.Elements[0].PosY - food.posY))
+                    {
+                        if (Options.Contains(0))
+                        {
+                            dir = 0;
+                            logging(dir, 5, Options);
+                        }
+                        else if (Options.Contains(3))
+                        {
+                            dir = 3;
+                            logging(dir, 6, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
+
+                    }
+                    else if ((food.posX - snake.Elements[0].PosX) < (snake.Elements[0].PosY - food.posY))
+                    {
+                        if (Options.Contains(3))
+                        {
+                            dir = 3;
+                            logging(dir, 7, Options);
+                        }
+                        else if (Options.Contains(0))
+                        {
+                            dir = 0;
+                            logging(dir, 8, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
                     }
                     else
                     {
@@ -249,69 +328,98 @@ namespace Snake
                         //nextdir = dir;
                         logging(dir, 0, Options);
                     }
-                    
                 }
-                else if ((food.posX - snake.Elements[0].PosX) < (food.posY - snake.Elements[0].PosY))
+                else if (food.posX <= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
                 {
-                    if (Options.Contains(1))
+                    if ((snake.Elements[0].PosX - food.posX) > (food.posY - snake.Elements[0].PosY))
                     {
-                        dir = 1;
-                        logging(dir, 3, Options);
+                        if (Options.Contains(2))
+                        {
+                            dir = 2;
+                            logging(dir, 9, Options);
+                        }
+                        else if (Options.Contains(1))
+                        {
+                            dir = 1;
+                            logging(dir, 10, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
                     }
-                    else if (Options.Contains(0))
+                    else if ((snake.Elements[0].PosX - food.posX) < (food.posY - snake.Elements[0].PosY))
                     {
-                        dir = 0;
-                        logging(dir, 4, Options);
+                        if (Options.Contains(1))
+                        {
+                            dir = 1;
+                            logging(dir, 11, Options);
+                        }
+                        else if (Options.Contains(2))
+                        {
+                            dir = 2;
+                            logging(dir, 12, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
                     }
                     else
                     {
                         dir = mySituation.GetBestDir();
-                        //nextdir = dir;
-                        //dir = Options[rnd.Next(0, Options.Count)];
-                        logging(dir, 0, Options);
-                    }
-                }
-                else
-                {
-                    //dir = Options[rnd.Next(0, Options.Count)];
-                    //nextdir = dir;
-                    logging(dir, 0, Options);
-                }
-            }
-            else if(food.posX >= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
-            {
-                if((food.posX - snake.Elements[0].PosX) > (snake.Elements[0].PosY - food.posY))
-                {
-                    if (Options.Contains(0))
-                    {
-                        dir = 0;
-                        logging(dir, 5, Options);
-                    }
-                    else if (Options.Contains(3))
-                    {
-                        dir = 3;
-                        logging(dir, 6, Options);
-                    }
-                    else
-                    {
-                        dir = mySituation.GetBestDir();
                         //dir = Options[rnd.Next(0, Options.Count)];
                         //nextdir = dir;
                         logging(dir, 0, Options);
                     }
-                    
                 }
-                else if ((food.posX - snake.Elements[0].PosX) < (snake.Elements[0].PosY - food.posY))
+                else if (food.posX <= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
                 {
-                    if (Options.Contains(3))
+                    if ((snake.Elements[0].PosX - food.posX) > (snake.Elements[0].PosY - food.posY))
                     {
-                        dir = 3;
-                        logging(dir, 7, Options);
+                        if (Options.Contains(2))
+                        {
+                            dir = 2;
+                            logging(dir, 13, Options);
+                        }
+                        else if (Options.Contains(3))
+                        {
+                            dir = 3;
+                            logging(dir, 14, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
                     }
-                    else if (Options.Contains(0))
+                    else if ((snake.Elements[0].PosX - food.posX) < (snake.Elements[0].PosY - food.posY))
                     {
-                        dir = 0;
-                        logging(dir, 8, Options);
+                        if (Options.Contains(3))
+                        {
+                            dir = 3;
+                            logging(dir, 14, Options);
+                        }
+                        else if (Options.Contains(2))
+                        {
+                            dir = 2;
+                            logging(dir, 15, Options);
+                        }
+                        else
+                        {
+                            dir = mySituation.GetBestDir();
+                            //dir = Options[rnd.Next(0, Options.Count)];
+                            //nextdir = dir;
+                            logging(dir, 0, Options);
+                        }
                     }
                     else
                     {
@@ -324,122 +432,20 @@ namespace Snake
                 else
                 {
                     dir = mySituation.GetBestDir();
-                    //dir = Options[rnd.Next(0, Options.Count)];
-                    //nextdir = dir;
                     logging(dir, 0, Options);
                 }
+                if (rnd.Next(0, 100) < randomChange)
+                {
+                    dir = Options[rnd.Next(0, Options.Count)];
+                    logging(dir, 999, Options);
+                }
             }
-            else if (food.posX <= snake.Elements[0].PosX && food.posY >= snake.Elements[0].PosY)
+            else if(Options.Count == 1)
             {
-                if((snake.Elements[0].PosX - food.posX) > (food.posY - snake.Elements[0].PosY))
-                {
-                    if (Options.Contains(2))
-                    {
-                        dir = 2;
-                        logging(dir, 9, Options);
-                    }
-                    else if (Options.Contains(1))
-                    {
-                        dir = 1;
-                        logging(dir, 10, Options);
-                    }
-                    else
-                    {
-                        dir = mySituation.GetBestDir();
-                        //dir = Options[rnd.Next(0, Options.Count)];
-                        //nextdir = dir;
-                        logging(dir, 0, Options);
-                    }
-                }
-                else if ((snake.Elements[0].PosX - food.posX) < (food.posY - snake.Elements[0].PosY))
-                {
-                    if (Options.Contains(1))
-                    {
-                        dir = 1;
-                        logging(dir, 11, Options);
-                    }
-                    else if (Options.Contains(2))
-                    {
-                        dir = 2;
-                        logging(dir, 12, Options);
-                    }
-                    else
-                    {
-                        dir = mySituation.GetBestDir();
-                        //dir = Options[rnd.Next(0, Options.Count)];
-                        //nextdir = dir;
-                        logging(dir, 0, Options);
-                    }
-                }
-                else
-                {
-                    dir = mySituation.GetBestDir();
-                    //dir = Options[rnd.Next(0, Options.Count)];
-                    //nextdir = dir;
-                    logging(dir, 0, Options);
-                }
+                dir = Options[0];
             }
-            else if (food.posX <= snake.Elements[0].PosX && food.posY <= snake.Elements[0].PosY)
-            {
-                if((snake.Elements[0].PosX - food.posX) > (snake.Elements[0].PosY - food.posY))
-                {
-                    if (Options.Contains(2))
-                    {
-                        dir = 2;
-                        logging(dir, 13, Options);
-                    }
-                    else if (Options.Contains(3))
-                    {
-                        dir = 3;
-                        logging(dir, 14, Options);
-                    }
-                    else
-                    {
-                        dir = mySituation.GetBestDir();
-                        //dir = Options[rnd.Next(0, Options.Count)];
-                        //nextdir = dir;
-                        logging(dir, 0, Options);
-                    }
-                }
-                else if ((snake.Elements[0].PosX - food.posX) < (snake.Elements[0].PosY - food.posY))
-                {
-                    if (Options.Contains(3))
-                    {
-                        dir = 3;
-                        logging(dir, 14, Options);
-                    }
-                    else if (Options.Contains(2))
-                    {
-                        dir = 2;
-                        logging(dir, 15, Options);
-                    }
-                    else
-                    {
-                        dir = mySituation.GetBestDir();
-                        //dir = Options[rnd.Next(0, Options.Count)];
-                        //nextdir = dir;
-                        logging(dir, 0, Options);
-                    }
-                }
-                else
-                {
-                    dir = mySituation.GetBestDir();
-                    //dir = Options[rnd.Next(0, Options.Count)];
-                    //nextdir = dir;
-                    logging(dir, 0, Options);
-                }
-            }
-            else
-            {
-                dir = mySituation.GetBestDir();
-                logging(dir, 0, Options);
-            }
-
-            if (rnd.Next(0, 100) < randomChange)
-            {
-                dir = Options[rnd.Next(0, Options.Count)];
-                logging(dir, 999, Options);
-            }
+            
+            
 
             lastOptions = Options;
             lastdir = dir;

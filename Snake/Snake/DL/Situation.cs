@@ -26,7 +26,7 @@ namespace Snake.DL
                     dir = option.Item1;
                 }
             }
-            if(max < Player.Log.Count / 2) {
+            if(max < 0) {
                 Random rnd = new Random();
                 dir = Options[rnd.Next(0, Options.Count)].Item1;
             }
